@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import ContentCard from "../../components/ContentCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { collectionMeta, entryHref, sortByPubDate, uniqueTags, type ContentKind } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const kinds: ContentKind[] = ["posts", "notes", "docs"];
+  const entriesByKind = await Promise.all(
+    kinds.map(async (kind) => ({
+      kind,
+      entries: await getCollection(kind, ({ data }) => !data.draft)
+    }))
+  );
+
+  const tags = uniqueTags(entriesByKind.flatMap(({ entries }) => entries));
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag }
+  }));
+}
+
+const { tag } = Astro.props;
+const kinds: ContentKind[] = ["posts", "notes", "docs"];
+const entriesByKind = await Promise.all(
+  kinds.map(async (kind) => ({
+    kind,
+    entries: await getCollection(kind, ({ data }) => !data.draft && data.tags.includes(tag))
+  }))
+);
+
+const items = sortByPubDate(
+  entriesByKind.flatMap(({ kind, entries }) => entries.map((entry) => ({ kind, entry, data: entry.data })))
+);
+---
+
+<BaseLayout title={`标签：${tag}`} description={`标签 ${tag} 下的文章、笔记和文档。`}>
+  <section class="page-heading section">
+    <p class="eyebrow">Tag</p>
+    <h1>{tag}</h1>
+  </section>
+  <section class="section content-grid">
+    {
+      items.map(({ kind, entry }) => (
+        <ContentCard
+          href={entryHref(kind, entry)}
+          title={entry.data.title}
+          description={entry.data.description}
+          pubDate={entry.data.pubDate}
+          tags={entry.data.tags}
+          kind={collectionMeta[kind].label}
+        />
+      ))
+    }
+  </section>
+</BaseLayout>

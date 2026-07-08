@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+import ContentCard from "../../components/ContentCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sortByPubDate } from "../../lib/content";
+
+const posts = sortByPubDate(await getCollection("posts", ({ data }) => !data.draft));
+---
+
+<BaseLayout title="文章" description="正式技术文章和工程复盘。">
+  <section class="page-heading section">
+    <p class="eyebrow">Posts</p>
+    <h1>文章</h1>
+  </section>
+  <section class="section content-grid">
+    {
+      posts.map((post) => (
+        <ContentCard
+          href={`/posts/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          tags={post.data.tags}
+        />
+      ))
+    }
+  </section>
+</BaseLayout>

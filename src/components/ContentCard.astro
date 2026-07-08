@@ -1,0 +1,27 @@
+---
+import TagList from "./TagList.astro";
+import { formatDate } from "../lib/content";
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+  kind?: string;
+}
+
+const { href, title, description, pubDate, tags = [], kind } = Astro.props;
+---
+
+<article class="content-card">
+  <a class="content-card__link" href={href}>
+    <div class="content-card__meta">
+      {kind && <span>{kind}</span>}
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    </div>
+    <h2>{title}</h2>
+    <p>{description}</p>
+  </a>
+  <TagList tags={tags} compact />
+</article>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="TechBlog">
+  <rect width="1200" height="630" fill="#f7f5ef"/>
+  <path fill="#dcebe5" d="M0 0h1200v190H0z"/>
+  <rect x="86" y="86" width="120" height="120" rx="26" fill="#146b5c"/>
+  <path fill="#f7f5ef" d="M113 118h66v16h-24v56h-18v-56h-24z"/>
+  <path fill="#f0b35e" d="M169 150h15v40h-15z"/>
+  <text x="86" y="328" fill="#20231f" font-family="Inter, system-ui, sans-serif" font-size="82" font-weight="800">TechBlog</text>
+  <text x="88" y="404" fill="#687064" font-family="Inter, system-ui, sans-serif" font-size="34">技术文章 · 工程笔记 · 文档分享</text>
+  <rect x="86" y="480" width="310" height="8" rx="4" fill="#146b5c"/>
+  <rect x="414" y="480" width="120" height="8" rx="4" fill="#b4542f"/>
+</svg>

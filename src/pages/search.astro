@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="搜索" description="搜索站内文章、笔记和文档。">
+  <section class="page-heading section">
+    <p class="eyebrow">Search</p>
+    <h1>搜索</h1>
+  </section>
+  <section class="section">
+    <div id="search" class="search-mount" data-pagefind-ignore></div>
+  </section>
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script is:inline>
+    window.addEventListener("DOMContentLoaded", async () => {
+      const mount = document.querySelector("#search");
+      if (!mount) return;
+
+      try {
+        const { PagefindUI } = await import("/pagefind/pagefind-ui.js");
+        new PagefindUI({
+          element: "#search",
+          showSubResults: true,
+          resetStyles: false,
+          translations: {
+            placeholder: "输入关键词",
+            clear_search: "清空",
+            load_more: "加载更多",
+            search_label: "搜索站内内容",
+            filters_label: "筛选",
+            zero_results: "没有找到匹配内容"
+          }
+        });
+      } catch {
+        mount.innerHTML = '<p class="muted">搜索索引会在生产构建后生成。</p>';
+      }
+    });
+  </script>
+</BaseLayout>

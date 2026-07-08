@@ -1,0 +1,20 @@
+---
+interface Props {
+  tags?: string[];
+  compact?: boolean;
+}
+
+const { tags = [], compact = false } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class:list={["tag-list", compact && "tag-list--compact"]} aria-label="标签">
+      {tags.map((tag) => (
+        <li>
+          <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+        </li>
+      ))}
+    </ul>
+  )
+}

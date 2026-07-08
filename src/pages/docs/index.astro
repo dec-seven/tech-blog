@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+import ContentCard from "../../components/ContentCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sortByPubDate } from "../../lib/content";
+
+const docs = sortByPubDate(await getCollection("docs", ({ data }) => !data.draft));
+---
+
+<BaseLayout title="文档" description="教程、方案和可分享资料。">
+  <section class="page-heading section">
+    <p class="eyebrow">Docs</p>
+    <h1>文档</h1>
+  </section>
+  <section class="section content-grid">
+    {
+      docs.map((doc) => (
+        <ContentCard
+          href={`/docs/${doc.id}/`}
+          title={doc.data.title}
+          description={doc.data.description}
+          pubDate={doc.data.pubDate}
+          tags={doc.data.tags}
+        />
+      ))
+    }
+  </section>
+</BaseLayout>

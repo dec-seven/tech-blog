@@ -1,0 +1,40 @@
+---
+import TagList from "../components/TagList.astro";
+import { formatDate } from "../lib/content";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  kind: string;
+}
+
+const { title, description, pubDate, updatedDate, tags = [], kind } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="article-shell" data-pagefind-body>
+    <header class="article-header">
+      <p class="eyebrow">{kind}</p>
+      <h1>{title}</h1>
+      <p class="article-description">{description}</p>
+      <div class="article-meta">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {
+          updatedDate && (
+            <span>
+              更新于 <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+            </span>
+          )
+        }
+      </div>
+      <TagList tags={tags} />
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

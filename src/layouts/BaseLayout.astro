@@ -1,0 +1,68 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const siteTitle = "TechBlog";
+const defaultDescription = "记录技术文章、工程笔记和可分享文档。";
+const { title = siteTitle, description = defaultDescription } = Astro.props;
+const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
+const pathname = Astro.url.pathname;
+const ogImage = new URL("/og.svg", Astro.site ?? Astro.url).toString();
+
+const navItems = [
+  { href: "/posts/", label: "文章" },
+  { href: "/notes/", label: "笔记" },
+  { href: "/docs/", label: "文档" },
+  { href: "/search/", label: "搜索" },
+  { href: "/about/", label: "关于" }
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="TechBlog RSS" href="/rss.xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="site-header" data-pagefind-ignore>
+      <a class="brand" href="/" aria-label="TechBlog 首页">
+        <img src="/favicon.svg" width="32" height="32" alt="" />
+        <span>TechBlog</span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        {
+          navItems.map((item) => (
+            <a
+              href={item.href}
+              aria-current={pathname.startsWith(item.href) ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <footer class="site-footer" data-pagefind-ignore>
+      <p>© {new Date().getFullYear()} TechBlog</p>
+      <a href="/rss.xml">RSS</a>
+    </footer>
+  </body>
+</html>
