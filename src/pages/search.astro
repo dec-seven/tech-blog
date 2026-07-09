@@ -17,7 +17,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       if (!mount) return;
 
       try {
-        const { PagefindUI } = await import("/pagefind/pagefind-ui.js");
+        await import("/pagefind/pagefind-ui.js");
+        const PagefindUI = window.PagefindUI;
+        if (!PagefindUI) throw new Error("Pagefind UI failed to load.");
+
         new PagefindUI({
           element: "#search",
           showSubResults: true,
