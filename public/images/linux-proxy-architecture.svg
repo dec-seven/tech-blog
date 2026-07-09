@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 520" role="img" aria-labelledby="title desc">
+  <title id="title">Linux 服务器代理链路</title>
+  <desc id="desc">命令行工具通过本机代理端口进入 mihomo，再由规则分流访问外部网络。</desc>
+  <rect width="1100" height="520" rx="28" fill="#f7f5ef"/>
+  <rect x="42" y="42" width="1016" height="436" rx="20" fill="#ffffff" stroke="#dcd8ca"/>
+  <text x="80" y="96" fill="#20231f" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="800">Linux 服务器代理链路</text>
+  <text x="80" y="132" fill="#687064" font-family="Inter, system-ui, sans-serif" font-size="18">只监听本机地址，命令行按需走代理，避免把端口暴露到公网。</text>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <rect x="80" y="205" width="190" height="112" rx="12" fill="#eef4ef" stroke="#b8c9bd"/>
+    <text x="111" y="250" fill="#20231f" font-size="24" font-weight="800">curl / git</text>
+    <text x="109" y="282" fill="#687064" font-size="16">pnpm / apt / wget</text>
+
+    <rect x="342" y="205" width="202" height="112" rx="12" fill="#dcebe5" stroke="#93b7aa"/>
+    <text x="378" y="250" fill="#0d493f" font-size="23" font-weight="800">127.0.0.1</text>
+    <text x="388" y="282" fill="#146b5c" font-size="16">7890 / 7891</text>
+
+    <rect x="617" y="205" width="184" height="112" rx="12" fill="#20231f" stroke="#20231f"/>
+    <text x="663" y="250" fill="#f7f5ef" font-size="25" font-weight="800">mihomo</text>
+    <text x="650" y="282" fill="#dcebe5" font-size="16">rule / global</text>
+
+    <rect x="874" y="205" width="146" height="112" rx="12" fill="#fff3df" stroke="#e3b36a"/>
+    <text x="912" y="250" fill="#20231f" font-size="24" font-weight="800">外部网络</text>
+    <text x="905" y="282" fill="#8a5a1f" font-size="16">节点 / 分流</text>
+  </g>
+
+  <g fill="none" stroke="#146b5c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M278 261h52"/>
+    <path d="m320 249 12 12-12 12"/>
+    <path d="M554 261h51"/>
+    <path d="m595 249 12 12-12 12"/>
+    <path d="M812 261h50"/>
+    <path d="m852 249 12 12-12 12"/>
+  </g>
+
+  <g font-family="Inter, system-ui, sans-serif" font-size="15" fill="#687064">
+    <text x="289" y="238">环境变量</text>
+    <text x="560" y="238">本机端口</text>
+    <text x="817" y="238">规则分流</text>
+  </g>
+
+  <rect x="80" y="370" width="940" height="54" rx="10" fill="#f1eee6" stroke="#dcd8ca"/>
+  <text x="104" y="404" fill="#20231f" font-family="SFMono-Regular, Consolas, monospace" font-size="18">export https_proxy=http://127.0.0.1:7890</text>
+</svg>

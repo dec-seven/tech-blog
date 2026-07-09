@@ -4,6 +4,7 @@ description: "记录这个博客的初始化思路：内容集合、静态生成
 pubDate: 2026-07-08
 tags: ["Astro", "博客", "前端"]
 featured: true
+draft: true
 ---
 
 Astro 适合技术博客的核心原因，是它把 Markdown 写作、组件化页面和静态生成结合得很自然。

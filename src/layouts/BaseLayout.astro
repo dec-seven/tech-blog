@@ -64,5 +64,80 @@ const navItems = [
       <p>© {new Date().getFullYear()} TechBlog</p>
       <a href="/rss.xml">RSS</a>
     </footer>
+    <script is:inline>
+      (() => {
+        const languageNames = {
+          bash: "bash",
+          sh: "shell",
+          shell: "shell",
+          text: "text",
+          plaintext: "text",
+          yaml: "yaml",
+          yml: "yaml",
+          ini: "ini",
+          js: "js",
+          ts: "ts",
+          json: "json"
+        };
+
+        const getLanguage = (pre, code) => {
+          const dataLanguage = pre.dataset.language;
+          if (dataLanguage) return languageNames[dataLanguage] ?? dataLanguage;
+
+          const languageClass = [...code.classList].find((className) =>
+            className.startsWith("language-")
+          );
+          const key = languageClass?.replace("language-", "") ?? "";
+          return languageNames[key] ?? key ?? "code";
+        };
+
+        const enhanceCodeBlocks = () => {
+          document.querySelectorAll(".prose pre").forEach((pre) => {
+            if (pre.parentElement?.classList.contains("code-shell")) return;
+
+            const code = pre.querySelector("code");
+            if (!code) return;
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "code-shell";
+
+            const bar = document.createElement("div");
+            bar.className = "code-shell__bar";
+
+            const label = document.createElement("span");
+            label.className = "code-shell__lang";
+            label.textContent = getLanguage(pre, code);
+
+            const button = document.createElement("button");
+            button.className = "code-shell__copy";
+            button.type = "button";
+            button.textContent = "复制";
+
+            button.addEventListener("click", async () => {
+              const text = code.innerText;
+              try {
+                await navigator.clipboard.writeText(text);
+                button.textContent = "已复制";
+              } catch {
+                button.textContent = "手动复制";
+              }
+              window.setTimeout(() => {
+                button.textContent = "复制";
+              }, 1600);
+            });
+
+            bar.append(label, button);
+            pre.parentNode?.insertBefore(wrapper, pre);
+            wrapper.append(bar, pre);
+          });
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", enhanceCodeBlocks);
+        } else {
+          enhanceCodeBlocks();
+        }
+      })();
+    </script>
   </body>
 </html>

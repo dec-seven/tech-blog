@@ -1,0 +1,76 @@
+---
+import { homeProfile } from "../data/home";
+
+interface Stats {
+  posts: number;
+  notes: number;
+  docs: number;
+}
+
+interface Props {
+  stats: Stats;
+}
+
+const { stats } = Astro.props;
+---
+
+<section class="profile-hero section-band" aria-labelledby="profile-title">
+  <div class="profile-card">
+    <div class="profile-card__header">
+      <img class="profile-card__avatar" src={homeProfile.avatar} width="88" height="88" alt="" />
+      <div>
+        <p class="eyebrow">个人知识库</p>
+        <h1 id="profile-title">{homeProfile.name}</h1>
+        <p class="profile-card__role">{homeProfile.role}</p>
+      </div>
+    </div>
+
+    <p class="profile-card__bio">{homeProfile.bio}</p>
+
+    <div class="profile-card__links" aria-label="主要入口">
+      {
+        homeProfile.primaryLinks.map((link) => (
+          <a href={link.href}>
+            <span>{link.label}</span>
+            <small>{link.description}</small>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="profile-card__footer">
+      <ul class="profile-card__social" aria-label="相关链接">
+        {
+          homeProfile.socialLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+      <span>{homeProfile.location}</span>
+    </div>
+  </div>
+
+  <aside class="profile-side" aria-label="内容概览">
+    <div class="profile-side__intro">
+      <p class="eyebrow">当前关注</p>
+      <h2>技术笔记、工程经验和文档沉淀</h2>
+      <p>从一条命令、一段调试记录，到一篇完整方案，都可以在这里慢慢长成自己的知识系统。</p>
+    </div>
+    <dl class="stat-grid stat-grid--stacked" aria-label="内容统计">
+      <div>
+        <dt>文章</dt>
+        <dd>{stats.posts}</dd>
+      </div>
+      <div>
+        <dt>笔记</dt>
+        <dd>{stats.notes}</dd>
+      </div>
+      <div>
+        <dt>文档</dt>
+        <dd>{stats.docs}</dd>
+      </div>
+    </dl>
+  </aside>
+</section>
