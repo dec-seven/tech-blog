@@ -1,4 +1,4 @@
-# TechBlog
+# DecSeven Blog
 
 个人技术博客，用于记录技术文章、笔记和可分享文档。
 

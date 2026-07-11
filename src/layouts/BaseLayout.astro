@@ -6,12 +6,12 @@ interface Props {
   description?: string;
 }
 
-const siteTitle = "TechBlog";
-const defaultDescription = "记录技术文章、工程笔记和可分享文档。";
+const siteTitle = "DecSeven";
+const defaultDescription = "DecSeven 的个人技术博客：记录工程实践、系统设计、工具链与持续学习。";
 const { title = siteTitle, description = defaultDescription } = Astro.props;
 const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const pathname = Astro.url.pathname;
-const ogImage = new URL("/og.svg", Astro.site ?? Astro.url).toString();
+const ogImage = new URL("/og.png", Astro.site ?? Astro.url).toString();
 
 const navItems = [
   { href: "/posts/", label: "文章" },
@@ -34,15 +34,15 @@ const navItems = [
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="TechBlog RSS" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="DecSeven RSS" href="/rss.xml" />
     <title>{pageTitle}</title>
   </head>
   <body>
     <a class="skip-link" href="#content">跳到内容</a>
     <header class="site-header" data-pagefind-ignore>
-      <a class="brand" href="/" aria-label="TechBlog 首页">
+      <a class="brand" href="/" aria-label="DecSeven 首页">
         <img src="/favicon.svg" width="32" height="32" alt="" />
-        <span>TechBlog</span>
+        <span>DecSeven</span>
       </a>
       <nav class="site-nav" aria-label="主导航">
         {
@@ -61,7 +61,7 @@ const navItems = [
       <slot />
     </main>
     <footer class="site-footer" data-pagefind-ignore>
-      <p>© {new Date().getFullYear()} TechBlog</p>
+      <p>© {new Date().getFullYear()} DecSeven</p>
       <a href="/rss.xml">RSS</a>
     </footer>
     <script is:inline>
