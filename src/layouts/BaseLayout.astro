@@ -7,7 +7,8 @@ interface Props {
 }
 
 const siteTitle = "DecSeven";
-const defaultDescription = "DecSeven 的个人技术博客：记录工程实践、系统设计、工具链与持续学习。";
+const defaultDescription =
+  "一个正在被 AI 抢饭碗的程序员，一边被卷，一边折腾。聊技术，也聊真实踩坑。";
 const { title = siteTitle, description = defaultDescription } = Astro.props;
 const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const pathname = Astro.url.pathname;

@@ -4,7 +4,9 @@ import ContentCard from "../../components/ContentCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { sortByPubDate } from "../../lib/content";
 
-const docs = sortByPubDate(await getCollection("docs", ({ data }) => !data.draft));
+const docs = sortByPubDate(
+  await getCollection("docs", ({ data }) => import.meta.env.DEV || !data.draft)
+);
 ---
 
 <BaseLayout title="文档" description="教程、方案和可分享资料。">

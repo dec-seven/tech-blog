@@ -1,7 +1,7 @@
 export const homeProfile = {
   name: "DecSeven",
-  role: "技术博客 / 工程笔记",
-  bio: "记录我在工程实践、系统设计、工具链和学习过程中的笔记，把零散经验沉淀成可检索、可分享的知识库。",
+  role: "一个正在被 AI 抢饭碗的程序员",
+  bio: "一边被卷，一边折腾。聊技术，也聊真实踩坑。把复杂的东西，尽量讲简单一点。",
   location: "中国",
   avatar: "/profile.svg",
   primaryLinks: [

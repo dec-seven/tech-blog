@@ -25,4 +25,4 @@ pnpm new -- doc "文档标题"
 - `src/content/notes/`：零散笔记
 - `src/content/docs/`：长文档、教程、分享材料
 
-发布到 Cloudflare Pages 时，构建命令使用 `pnpm build`，输出目录使用 `dist`。如果有自己的域名，把环境变量 `SITE` 设置为完整站点地址，例如 `https://blog.example.com`。
+站点当前发布在 `https://decseven.pages.dev`。发布到 Cloudflare Pages 时，构建命令使用 `pnpm build`，输出目录使用 `dist`。如果以后绑定自定义域名，把环境变量 `SITE` 设置为新的完整站点地址。
