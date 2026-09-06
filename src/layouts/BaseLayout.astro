@@ -189,7 +189,10 @@ const canonical = new URL(pathname, Astro.site ?? Astro.url);
 
           const storageKey = `d7:view:${scope}:${resource}`;
           const lastViewedAt = Number(storage?.getItem(storageKey) ?? 0);
-          const shouldRecord = !hasPrivacyOptOut && storage !== null && Date.now() - lastViewedAt >= counterWindowMs;
+          const shouldRecord = element.dataset.viewReadonly !== "true"
+            && !hasPrivacyOptOut
+            && storage !== null
+            && Date.now() - lastViewedAt >= counterWindowMs;
           const endpoint = shouldRecord
             ? "/api/views"
             : `/api/views?scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}`;

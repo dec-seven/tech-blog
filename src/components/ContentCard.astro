@@ -22,7 +22,6 @@ const { href, title, description, pubDate, tags = [], kind, topic, cover } = Ast
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </div>
     <div class="content-card__body">
-      {(topic || kind) && <p class="content-card__topic">{topic && topicMeta[topic].label}{topic && kind && " / "}{kind}</p>}
       <h2>{title}</h2>
       <p>{description}</p>
     </div>
@@ -31,5 +30,13 @@ const { href, title, description, pubDate, tags = [], kind, topic, cover } = Ast
       <span class="content-card__arrow" aria-hidden="true">↗</span>
     </div>
   </a>
-  <TagList tags={tags} compact />
+  <div class="content-card__footer">
+    <div class="content-card__topics">
+      {(topic || kind) && <span class="content-card__topic">{topic && topicMeta[topic].label}{topic && kind && " / "}{kind}</span>}
+      <TagList tags={tags} compact />
+    </div>
+    <span class="view-counter content-card__views" data-view-counter data-view-scope="article" data-view-resource={href} data-view-readonly="true" hidden>
+      阅读 <strong data-view-count>0</strong>
+    </span>
+  </div>
 </article>
