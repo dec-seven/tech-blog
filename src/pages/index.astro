@@ -48,8 +48,8 @@ const asideWriting = writing.find(({ entry }) => entry.data.topic !== "tech");
 
   <section class="section home-section" aria-labelledby="writing-title">
     <header class="section-heading">
-      <div><p class="eyebrow">03 / SELECTED WRITING</p><h2 id="writing-title">实践之后，写下来</h2></div>
-      <a class="text-link" href="/writing/">全部写作 <span aria-hidden="true">↗</span></a>
+      <div><p class="eyebrow">03 / SELECTED ARTICLES</p><h2 id="writing-title">实践之后，写下来</h2></div>
+      <a class="text-link" href="/writing/">全部文章 <span aria-hidden="true">↗</span></a>
     </header>
     <div class="content-list">
       {selectedWriting.map(({ entry, kind }) => (
@@ -66,7 +66,7 @@ const asideWriting = writing.find(({ entry }) => entry.data.topic !== "tech");
         <p class="eyebrow">04 / BEYOND THE CODE</p>
         <h2 id="outside-title">屏幕之外，<br />还有很多值得记下。</h2>
         <p class="muted">生活不需要先变成经验，想法也不必急着有结论。</p>
-        <div class="topic-links" aria-label="非技术写作">
+        <div class="topic-links" aria-label="其他文章主题">
           <a href="/writing/life/">生活 <span aria-hidden="true">↗</span></a>
           <a href="/writing/ideas/">奇想 <span aria-hidden="true">↗</span></a>
         </div>

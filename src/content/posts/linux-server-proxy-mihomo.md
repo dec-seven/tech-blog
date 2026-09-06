@@ -3,6 +3,7 @@ title: "Linux 服务器代理配置记录：mihomo 后台运行与按需代理"
 description: "记录在无桌面 Linux 服务器上配置 mihomo 的过程：安装、配置、前台验证、systemd 托管、命令行代理、Dashboard 访问和排错。"
 pubDate: 2026-07-08
 tags: ["Linux", "代理", "mihomo", "systemd"]
+cover: "/images/linux-proxy-architecture.svg"
 featured: true
 ---
 

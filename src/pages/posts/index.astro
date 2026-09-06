@@ -21,6 +21,9 @@ const posts = sortByPubDate(await getCollection("posts", ({ data }) => !data.dra
           description={post.data.description}
           pubDate={post.data.pubDate}
           tags={post.data.tags}
+          topic={post.data.topic}
+          kind="文章"
+          cover={post.data.cover}
         />
       ))
     }

@@ -8,9 +8,9 @@ export function getStaticPaths() {
 const { topic } = Astro.props;
 const meta = topicMeta[topic];
 ---
-<BaseLayout title={`写作 · ${meta.label}`} description={meta.description}>
+<BaseLayout title={`文章 · ${meta.label}`} description={meta.description}>
   <header class="section page-heading">
-    <p class="eyebrow">WRITING / {meta.label}</p>
+    <p class="eyebrow">文章 / {meta.label}</p>
     <h1>{meta.label}</h1>
     <p>{meta.description}</p>
   </header>

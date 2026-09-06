@@ -8,6 +8,7 @@ const entrySchema = z.object({
   pubDate: z.coerce.date(),
   updatedDate: z.coerce.date().optional(),
   tags: z.array(z.string()).default([]),
+  cover: z.string().optional(),
   topic: z.enum(["tech", "life", "ideas"]).default("tech"),
   draft: z.boolean().default(false),
   featured: z.boolean().default(false)

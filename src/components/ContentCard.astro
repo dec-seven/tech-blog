@@ -10,22 +10,26 @@ interface Props {
   tags?: string[];
   kind?: string;
   topic?: ContentTopic;
+  cover?: string;
 }
 
-const { href, title, description, pubDate, tags = [], kind, topic } = Astro.props;
+const { href, title, description, pubDate, tags = [], kind, topic, cover } = Astro.props;
 ---
 
 <article class="content-card">
   <a class="content-card__link" href={href}>
     <div class="content-card__meta">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-      <span>{topic && topicMeta[topic].label}{topic && kind && " / "}{kind}</span>
     </div>
     <div class="content-card__body">
+      {(topic || kind) && <p class="content-card__topic">{topic && topicMeta[topic].label}{topic && kind && " / "}{kind}</p>}
       <h2>{title}</h2>
       <p>{description}</p>
     </div>
-    <span class="content-card__arrow" aria-hidden="true">↗</span>
+    <div class="content-card__aside">
+      {cover && <img class="content-card__thumbnail" src={cover} alt="" loading="lazy" />}
+      <span class="content-card__arrow" aria-hidden="true">↗</span>
+    </div>
   </a>
   <TagList tags={tags} compact />
 </article>

@@ -50,6 +50,8 @@ const items = sortByPubDate(
           pubDate={entry.data.pubDate}
           tags={entry.data.tags}
           kind={collectionMeta[kind].label}
+          topic={entry.data.topic}
+          cover={entry.data.cover}
         />
       ))
     }
