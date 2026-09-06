@@ -20,12 +20,15 @@ import { homeProfile, photoNotes } from "../data/home";
   <div class="hero-side">
     <section class="hero-photo" aria-labelledby="photo-title" data-photo-carousel data-photo-count={Math.min(photoNotes.length, 10)}>
       <div class="hero-photo__heading">
-        <p class="eyebrow">PHOTO NOTES <span class="eyebrow-separator">/</span> 01</p>
+        <p class="eyebrow">PHOTO SWITCHER <span class="eyebrow-separator">/</span> 01</p>
         <span class="hero-photo__count">{String(Math.min(photoNotes.length, 10)).padStart(2, "0")} 张记录</span>
       </div>
-      <h2 id="photo-title" class="sr-only">照片便签</h2>
-      <div class="photo-carousel photo-carousel--hero">
-        <div class="photo-track">
+      <h2 id="photo-title" class="sr-only">照片切换台</h2>
+      <div class="photo-switcher">
+        <div class="photo-switcher__stage">
+          <span class="photo-switcher__mark photo-switcher__mark--top" aria-hidden="true">D7 / FIELD</span>
+          <span class="photo-switcher__mark photo-switcher__mark--bottom" aria-hidden="true">KEEP LOOKING</span>
+          <div class="photo-track">
           {photoNotes.slice(0, 10).map((photo, index) => (
             <figure class:list={["photo-note", index === 0 ? "is-current" : "is-hidden"]} data-photo-slide aria-hidden={index === 0 ? undefined : "true"}>
               <div class="photo-note__paper">
@@ -37,11 +40,17 @@ import { homeProfile, photoNotes } from "../data/home";
               </div>
             </figure>
           ))}
+          </div>
+          <button type="button" class="photo-switcher__trigger" data-photo-next title="切换到下一张照片" aria-label="切换到下一张照片">
+            <span aria-hidden="true">↻</span>
+            <span>换一张</span>
+          </button>
         </div>
         <div class="photo-controls" data-photo-controls aria-label="照片轮播控制">
-          <button type="button" class="photo-control" data-photo-prev aria-label="上一张照片">←</button>
+          <button type="button" class="photo-control" data-photo-prev title="上一张照片" aria-label="上一张照片">←</button>
           <span class="photo-counter" data-photo-counter>01 / {String(Math.min(photoNotes.length, 10)).padStart(2, "0")}</span>
-          <button type="button" class="photo-control" data-photo-next aria-label="下一张照片">→</button>
+          <span class="photo-controls__label">左滑切换</span>
+          <button type="button" class="photo-control" data-photo-next title="下一张照片" aria-label="下一张照片">→</button>
         </div>
       </div>
     </section>
@@ -54,35 +63,47 @@ import { homeProfile, photoNotes } from "../data/home";
   const controls = carousel?.querySelector("[data-photo-controls]");
   const counter = carousel?.querySelector("[data-photo-counter]");
   const previous = carousel?.querySelector("[data-photo-prev]");
-  const next = carousel?.querySelector("[data-photo-next]");
+  const nextButtons = carousel ? [...carousel.querySelectorAll("[data-photo-next]")] : [];
 
-  if (carousel && slides.length > 1 && controls && counter && previous && next) {
+  if (carousel && slides.length > 1 && controls && counter && previous && nextButtons.length > 0) {
     let active = 0;
-    let timer: number | undefined;
-    const show = (index: number) => {
-      active = (index + slides.length) % slides.length;
-      slides.forEach((slide, slideIndex) => {
-        const offset = (slideIndex - active + slides.length) % slides.length;
-        const state = offset === 0 ? "is-current" : offset === 1 ? "is-next" : offset === slides.length - 1 ? "is-prev" : "is-hidden";
-        const selected = state === "is-current";
-        slide.classList.remove("is-current", "is-next", "is-prev", "is-hidden");
-        slide.classList.add(state);
-        slide.setAttribute("aria-hidden", String(!selected));
+    let transitioning = false;
+    const show = (index: number, direction = 1) => {
+      if (transitioning) return;
+
+      const next = (index + slides.length) % slides.length;
+      if (next === active) return;
+
+      transitioning = true;
+      const outgoing = slides[active];
+      const incoming = slides[next];
+      const leave = direction > 0 ? "is-leaving-left" : "is-leaving-right";
+      const enter = direction > 0 ? "is-entering-right" : "is-entering-left";
+
+      outgoing.classList.remove("is-current");
+      outgoing.classList.add(leave);
+      outgoing.setAttribute("aria-hidden", "true");
+      incoming.classList.remove("is-hidden");
+      incoming.classList.add(enter);
+      incoming.setAttribute("aria-hidden", "false");
+
+      window.requestAnimationFrame(() => {
+        incoming.classList.remove(enter);
+        incoming.classList.add("is-current");
       });
-      counter.textContent = `${String(active + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+
+      window.setTimeout(() => {
+        outgoing.classList.remove(leave);
+        outgoing.classList.add("is-hidden");
+        outgoing.setAttribute("aria-hidden", "true");
+        active = next;
+        transitioning = false;
+      }, 460);
+
+      counter.textContent = `${String(next + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
     };
-    const restart = () => {
-      if (timer !== undefined) window.clearInterval(timer);
-      timer = window.setInterval(() => show(active + 1), 5200);
-    };
-    previous.addEventListener("click", () => { show(active - 1); restart(); });
-    next.addEventListener("click", () => { show(active + 1); restart(); });
-    carousel.addEventListener("mouseenter", () => { if (timer !== undefined) window.clearInterval(timer); });
-    carousel.addEventListener("mouseleave", restart);
-    carousel.addEventListener("focusin", () => { if (timer !== undefined) window.clearInterval(timer); });
-    carousel.addEventListener("focusout", restart);
-    show(0);
-    restart();
+    previous.addEventListener("click", () => show(active - 1, -1));
+    nextButtons.forEach((button) => button.addEventListener("click", () => show(active + 1)));
   } else if (controls) {
     controls.setAttribute("hidden", "true");
   }
