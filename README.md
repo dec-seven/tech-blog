@@ -31,4 +31,4 @@ pnpm new -- doc "文档标题"
 
 浏览量由同域 Cloudflare Worker 与 D1 保存。数据库仅包含页面路径与聚合计数，不保存 IP、Cookie、访客身份或访问来源。
 
-在 Cloudflare Pages 项目中创建一个 D1 数据库并绑定为 `DB`，再执行 `db/migrations/0001_view_counters.sql`。文章页和网站页脚会在同一浏览器的 30 分钟窗口内最多各记录一次；启用浏览器“请勿跟踪”时只读取、不写入统计数据。
+Cloudflare Pages 会通过 `functions/api/views.js` 暴露统计接口。在 Pages 项目中创建一个 D1 数据库并绑定为 `DB`，再执行 `db/migrations/0001_view_counters.sql`。文章页和网站页脚会在同一浏览器的 30 分钟窗口内最多各记录一次；启用浏览器“请勿跟踪”时只读取、不写入统计数据。
