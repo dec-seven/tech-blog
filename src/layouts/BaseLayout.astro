@@ -76,7 +76,12 @@ const canonical = new URL(pathname, Astro.site ?? Astro.url);
     <footer class="site-footer" data-pagefind-ignore>
       <div>
         <p class="site-footer__statement">持续构建，慢慢记录。</p>
-        <p>© {new Date().getFullYear()} DecSeven</p>
+        <p>
+          © {new Date().getFullYear()} DecSeven
+          <span class="view-counter" data-view-counter data-view-scope="site" data-view-resource="/" hidden>
+            · 本站累计 <strong data-view-count>0</strong> 次访问
+          </span>
+        </p>
       </div>
       <div class="site-footer__links">
         <a href="https://github.com/dec-seven">GitHub ↗</a>
@@ -157,6 +162,62 @@ const canonical = new URL(pathname, Astro.site ?? Astro.url);
         } else {
           enhanceCodeBlocks();
         }
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const counterWindowMs = 30 * 60 * 1000;
+
+        const getStorage = () => {
+          try {
+            const key = "d7:view-counter-check";
+            window.localStorage.setItem(key, "1");
+            window.localStorage.removeItem(key);
+            return window.localStorage;
+          } catch {
+            return null;
+          }
+        };
+
+        const storage = getStorage();
+        const hasPrivacyOptOut = navigator.doNotTrack === "1" || navigator.globalPrivacyControl === true;
+
+        const updateCounter = async (element) => {
+          const scope = element.dataset.viewScope;
+          const resource = element.dataset.viewResource;
+          if (!scope || !resource) return;
+
+          const storageKey = `d7:view:${scope}:${resource}`;
+          const lastViewedAt = Number(storage?.getItem(storageKey) ?? 0);
+          const shouldRecord = !hasPrivacyOptOut && storage !== null && Date.now() - lastViewedAt >= counterWindowMs;
+          const endpoint = shouldRecord
+            ? "/api/views"
+            : `/api/views?scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}`;
+
+          try {
+            const response = await fetch(endpoint, shouldRecord ? {
+              method: "POST",
+              credentials: "same-origin",
+              cache: "no-store",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ scope, resource })
+            } : { credentials: "same-origin", cache: "no-store" });
+
+            if (!response.ok) return;
+
+            const payload = await response.json();
+            const count = element.querySelector("[data-view-count]");
+            if (count && Number.isInteger(payload.views)) count.textContent = String(payload.views);
+            if (shouldRecord) storage.setItem(storageKey, String(Date.now()));
+            element.hidden = false;
+          } catch {
+            // A private browser or an unavailable analytics service should not affect reading.
+          }
+        };
+
+        document.querySelectorAll("[data-view-counter]").forEach((element) => {
+          void updateCounter(element);
+        });
       })();
     </script>
   </body>

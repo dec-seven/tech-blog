@@ -25,7 +25,7 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
 const hasToc = tocHeadings.length > 0;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} article>
   <div class:list={["article-frame", hasToc && "article-frame--with-toc"]}>
     <article class="article-shell" data-pagefind-body>
       <header class="article-header">
@@ -41,6 +41,9 @@ const hasToc = tocHeadings.length > 0;
               </span>
             )
           }
+          <span class="view-counter" data-view-counter data-view-scope="article" data-view-resource={Astro.url.pathname} hidden>
+            浏览 <strong data-view-count>0</strong>
+          </span>
         </div>
         <TagList tags={tags} />
       </header>

@@ -251,6 +251,8 @@ main { min-height: calc(100vh - 14rem); }
 .site-footer__links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem 1.5rem; font-family: var(--mono); font-size: .75rem; }
 .site-footer__links a { display: inline-flex; min-height: 2.75rem; align-items: center; }
 .site-footer a:hover { color: var(--accent); }
+.view-counter { white-space: nowrap; }
+.view-counter strong { color: inherit; font-weight: 500; }
 @media (max-width: 960px) {
   .developer-hero { grid-template-columns: minmax(0, 1fr) minmax(20rem, .8fr); gap: 2.5rem; }
   .project-card { grid-template-columns: 1.5rem minmax(0, 1fr) minmax(11rem, .65fr); gap: 1rem; }
