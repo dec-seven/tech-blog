@@ -1,76 +1,89 @@
 ---
-import { homeProfile } from "../data/home";
-
-interface Stats {
-  posts: number;
-  notes: number;
-  docs: number;
-}
-
-interface Props {
-  stats: Stats;
-}
-
-const { stats } = Astro.props;
+import { homeProfile, photoNotes } from "../data/home";
 ---
-
-<section class="profile-hero section-band" aria-labelledby="profile-title">
-  <div class="profile-card">
-    <div class="profile-card__header">
-      <img class="profile-card__avatar" src={homeProfile.avatar} width="88" height="88" alt="" />
-      <div>
-        <p class="eyebrow">个人知识库</p>
-        <h1 id="profile-title">{homeProfile.name}</h1>
-        <p class="profile-card__role">{homeProfile.role}</p>
-      </div>
+<section class="section developer-hero" aria-labelledby="profile-title">
+  <div class="hero-copy">
+    <div class="hero-profile">
+      <img src={homeProfile.avatar} alt={homeProfile.avatarAlt} width="176" height="132" />
+      <span class="eyebrow">PERSONAL FIELD NOTE / 01</span>
     </div>
-
-    <p class="profile-card__bio">{homeProfile.bio}</p>
-
-    <div class="profile-card__links" aria-label="主要入口">
-      {
-        homeProfile.primaryLinks.map((link) => (
-          <a href={link.href}>
-            <span>{link.label}</span>
-            <small>{link.description}</small>
-          </a>
-        ))
-      }
-    </div>
-
-    <div class="profile-card__footer">
-      <ul class="profile-card__social" aria-label="相关链接">
-        {
-          homeProfile.socialLinks.map((link) => (
-            <li>
-              <a href={link.href}>{link.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-      <span>{homeProfile.location}</span>
+    <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> {homeProfile.role} <span class="eyebrow-separator">/</span> DECSEVEN</p>
+    <h1 id="profile-title">
+      {homeProfile.headline.map((line) => <span>{line}</span>)}
+    </h1>
+    <p class="hero-bio">{homeProfile.bio}</p>
+    <div class="hero-actions">
+      <a class="action-link action-link--primary" href="/work/">看看我的作品 <span aria-hidden="true">↗</span></a>
+      <a class="quiet-link" href="/writing/">从一篇文章开始 <span aria-hidden="true">→</span></a>
     </div>
   </div>
-
-  <aside class="profile-side" aria-label="内容概览">
-    <div class="profile-side__intro">
-      <p class="eyebrow">当前关注</p>
-      <h2>一边被卷，一边折腾</h2>
-      <p>聊技术，也聊真实踩坑。把复杂的东西，尽量讲简单一点。</p>
-    </div>
-    <dl class="stat-grid stat-grid--stacked" aria-label="内容统计">
-      <div>
-        <dt>文章</dt>
-        <dd>{stats.posts}</dd>
+  <div class="hero-side">
+    <section class="hero-photo" aria-labelledby="photo-title" data-photo-carousel data-photo-count={Math.min(photoNotes.length, 10)}>
+      <div class="hero-photo__heading">
+        <p class="eyebrow">PHOTO NOTES <span class="eyebrow-separator">/</span> 01</p>
+        <span class="hero-photo__count">{String(Math.min(photoNotes.length, 10)).padStart(2, "0")} 张记录</span>
       </div>
-      <div>
-        <dt>笔记</dt>
-        <dd>{stats.notes}</dd>
+      <h2 id="photo-title" class="sr-only">照片便签</h2>
+      <div class="photo-carousel photo-carousel--hero">
+        <div class="photo-track">
+          {photoNotes.slice(0, 10).map((photo, index) => (
+            <figure class:list={["photo-note", index === 0 ? "is-current" : "is-hidden"]} data-photo-slide aria-hidden={index === 0 ? undefined : "true"}>
+              <div class="photo-note__paper">
+                <div class="photo-note__image"><img src={photo.src} alt={photo.alt} loading={index === 0 ? "eager" : "lazy"} /></div>
+                <figcaption>
+                  <span class="eyebrow">{photo.label}</span>
+                  <p>{photo.caption}</p>
+                </figcaption>
+              </div>
+            </figure>
+          ))}
+        </div>
+        <div class="photo-controls" data-photo-controls aria-label="照片轮播控制">
+          <button type="button" class="photo-control" data-photo-prev aria-label="上一张照片">←</button>
+          <span class="photo-counter" data-photo-counter>01 / {String(Math.min(photoNotes.length, 10)).padStart(2, "0")}</span>
+          <button type="button" class="photo-control" data-photo-next aria-label="下一张照片">→</button>
+        </div>
       </div>
-      <div>
-        <dt>文档</dt>
-        <dd>{stats.docs}</dd>
-      </div>
-    </dl>
-  </aside>
+    </section>
+  </div>
 </section>
+
+<script>
+  const carousel = document.querySelector("[data-photo-carousel]");
+  const slides = carousel ? [...carousel.querySelectorAll("[data-photo-slide]")] : [];
+  const controls = carousel?.querySelector("[data-photo-controls]");
+  const counter = carousel?.querySelector("[data-photo-counter]");
+  const previous = carousel?.querySelector("[data-photo-prev]");
+  const next = carousel?.querySelector("[data-photo-next]");
+
+  if (carousel && slides.length > 1 && controls && counter && previous && next) {
+    let active = 0;
+    let timer: number | undefined;
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const offset = (slideIndex - active + slides.length) % slides.length;
+        const state = offset === 0 ? "is-current" : offset === 1 ? "is-next" : offset === slides.length - 1 ? "is-prev" : "is-hidden";
+        const selected = state === "is-current";
+        slide.classList.remove("is-current", "is-next", "is-prev", "is-hidden");
+        slide.classList.add(state);
+        slide.setAttribute("aria-hidden", String(!selected));
+      });
+      counter.textContent = `${String(active + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+    };
+    const restart = () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      timer = window.setInterval(() => show(active + 1), 5200);
+    };
+    previous.addEventListener("click", () => { show(active - 1); restart(); });
+    next.addEventListener("click", () => { show(active + 1); restart(); });
+    carousel.addEventListener("mouseenter", () => { if (timer !== undefined) window.clearInterval(timer); });
+    carousel.addEventListener("mouseleave", restart);
+    carousel.addEventListener("focusin", () => { if (timer !== undefined) window.clearInterval(timer); });
+    carousel.addEventListener("focusout", restart);
+    show(0);
+    restart();
+  } else if (controls) {
+    controls.setAttribute("hidden", "true");
+  }
+</script>

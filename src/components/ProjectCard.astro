@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from "astro:content";
+interface Props { project: CollectionEntry<"projects">; index: number; }
+const { project, index } = Astro.props;
+---
+<article class="project-card">
+  <div class="project-card__number" aria-hidden="true">{String(index).padStart(2, "0")}</div>
+  <div class="project-card__main">
+    <div class="project-card__meta"><span>{project.data.category}</span><span>{project.data.period}</span></div>
+    <h3><a href={`/work/${project.id}/`}>{project.data.title}</a></h3>
+    <p>{project.data.description}</p>
+    <ul class="work-tags" aria-label="技术栈">
+      {project.data.stack.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+  <div class="project-card__result">
+    <span class="eyebrow">项目结果</span>
+    <p>{project.data.outcome}</p>
+    <a class="text-link" href={`/work/${project.id}/`}>阅读案例 <span aria-hidden="true">↗</span></a>
+  </div>
+</article>

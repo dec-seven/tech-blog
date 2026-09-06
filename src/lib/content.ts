@@ -1,6 +1,24 @@
-import type { CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
 export type ContentKind = "posts" | "notes" | "docs";
+export type ContentTopic = "tech" | "life" | "ideas";
+
+export const topicMeta: Record<ContentTopic, { label: string; description: string }> = {
+  tech: { label: "技术", description: "项目实践、技术选择，以及排查问题的过程。" },
+  life: { label: "生活", description: "工作之外的观察、经历与日常。" },
+  ideas: { label: "奇想", description: "还没有结论，也值得记下来的问题。" }
+};
+
+export async function getWriting() {
+  const kinds: ContentKind[] = ["posts", "notes", "docs"];
+  const groups = await Promise.all(kinds.map(async (kind) => {
+    const entries = await getCollection(kind, ({ data }) => !data.draft);
+    return entries.map((entry) => ({ kind, entry }));
+  }));
+  return groups.flat().sort((a, b) =>
+    b.entry.data.pubDate.valueOf() - a.entry.data.pubDate.valueOf() || a.entry.id.localeCompare(b.entry.id)
+  );
+}
 
 export const collectionMeta: Record<ContentKind, { label: string; href: string }> = {
   posts: { label: "文章", href: "/posts/" },
@@ -16,7 +34,8 @@ export function formatDate(date: Date) {
   return new Intl.DateTimeFormat("zh-CN", {
     year: "numeric",
     month: "2-digit",
-    day: "2-digit"
+    day: "2-digit",
+    timeZone: "Asia/Shanghai"
   }).format(date);
 }
 

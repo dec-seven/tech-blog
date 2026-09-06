@@ -1,23 +1,65 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { homeProfile } from "../data/home";
 ---
 
 <BaseLayout
   title="关于"
-  description="一个正在被 AI 抢饭碗的程序员，一边被卷，一边折腾。聊技术，也聊真实踩坑。"
+  description="关于 DecSeven：开发者、写作者，以及这个网站为什么存在。"
 >
-  <section class="article-shell" data-pagefind-body>
-    <header class="article-header">
-      <p class="eyebrow">关于</p>
-      <h1>关于</h1>
-      <p class="article-description">
-        一个正在被 AI 抢饭碗的程序员
+  <section class="about-hero section">
+    <p class="eyebrow">ABOUT / DECSEVEN</p>
+    <h1>我想留下的，<br />不只是代码。</h1>
+    <p class="about-hero__lead">
+      我是 DecSeven，一名开发者。喜欢把复杂的问题拆开、做成能运行的东西，再把过程讲清楚。
+    </p>
+  </section>
+
+  <section class="about-grid section" data-pagefind-body>
+    <div class="about-grid__label">
+      <span>01</span>
+      <p>WHY THIS SITE</p>
+    </div>
+    <div class="about-copy">
+      <h2>这是作品集，也是成长记录。</h2>
+      <p>
+        技术博客很容易变成教程仓库，但我更在意真实过程：为什么这样选、哪里失败过、最后解决了什么。
+        这些信息比一串熟练度标签更接近一个开发者真正的能力。
       </p>
-    </header>
-    <div class="prose">
-      <p>一边被卷，一边折腾。</p>
-      <p>聊技术，也聊真实踩坑。</p>
-      <p>把复杂的东西，尽量讲简单一点。</p>
+      <p>
+        我也会写生活、阶段性的困惑和偶尔冒出来的怪想法。它们不一定有标准答案，但会让这里更像一个真实的人，
+        而不是一份被无限拉长的简历。
+      </p>
+    </div>
+  </section>
+
+  <section class="about-grid section">
+    <div class="about-grid__label">
+      <span>02</span>
+      <p>WORKING SET</p>
+    </div>
+    <div class="about-copy">
+      <h2>当前工作集</h2>
+      <dl class="about-stack">
+        {
+          homeProfile.stack.map((item) => (
+            <div>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="about-contact section">
+    <p class="eyebrow">ELSEWHERE</p>
+    <h2>继续看看我做过什么。</h2>
+    <div class="about-contact__links">
+      <a href="https://github.com/dec-seven">GitHub <span aria-hidden="true">↗</span></a>
+      <a href="/posts/">技术文章 <span aria-hidden="true">↗</span></a>
+      <a href="/rss.xml">订阅 RSS <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 </BaseLayout>

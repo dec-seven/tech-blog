@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
+export async function getStaticPaths() {
+  return (await getCollection("projects", ({ data }) => !data.draft))
+    .map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+---
+<BaseLayout title={project.data.title} description={project.data.description} article>
+  <article data-pagefind-body>
+    <header class="section page-heading case-heading">
+      <a class="back-link" href="/work/" data-pagefind-ignore>← 全部作品</a>
+      <p class="eyebrow">CASE STUDY / {project.data.category}</p>
+      <h1>{project.data.title}</h1>
+      <p class="case-summary">{project.data.description}</p>
+      <dl class="case-facts">
+        <div><dt>我的职责</dt><dd>{project.data.role}</dd></div>
+        <div><dt>时间</dt><dd>{project.data.period}</dd></div>
+        <div><dt>状态</dt><dd>{project.data.status}</dd></div>
+      </dl>
+      <ul class="work-tags" aria-label="技术栈">{project.data.stack.map((item) => <li>{item}</li>)}</ul>
+      <div class="evidence-links" aria-label="项目证据">
+        {project.data.evidence.map((link) => <a href={link.href}>{link.label} <span aria-hidden="true">↗</span></a>)}
+      </div>
+    </header>
+    <div class="article-frame article-frame--with-toc">
+      <div class="article-shell">
+        <TableOfContents headings={headings} class="article-toc--inline" />
+        <div class="prose"><Content /></div>
+        <footer class="article-end" data-pagefind-ignore>
+          <p class="eyebrow">延伸阅读 / EVIDENCE</p>
+          <div class="evidence-links">
+            {project.data.evidence.map((link) => <a href={link.href}>{link.label} <span aria-hidden="true">↗</span></a>)}
+          </div>
+          <a class="back-link" href="/work/">← 返回作品</a>
+        </footer>
+      </div>
+      <TableOfContents headings={headings} class="article-toc--side" />
+    </div>
+  </article>
+</BaseLayout>

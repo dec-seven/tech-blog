@@ -8,6 +8,7 @@ const entrySchema = z.object({
   pubDate: z.coerce.date(),
   updatedDate: z.coerce.date().optional(),
   tags: z.array(z.string()).default([]),
+  topic: z.enum(["tech", "life", "ideas"]).default("tech"),
   draft: z.boolean().default(false),
   featured: z.boolean().default(false)
 });
@@ -27,4 +28,22 @@ const docs = defineCollection({
   schema: entrySchema
 });
 
-export const collections = { posts, notes, docs };
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    category: z.string(),
+    period: z.string(),
+    role: z.string(),
+    status: z.string(),
+    stack: z.array(z.string()),
+    outcome: z.string(),
+    featured: z.boolean().default(false),
+    order: z.number().default(99),
+    draft: z.boolean().default(false),
+    evidence: z.array(z.object({ label: z.string(), href: z.string() }))
+  })
+});
+
+export const collections = { posts, notes, docs, projects };

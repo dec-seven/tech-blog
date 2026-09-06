@@ -4,23 +4,29 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  article?: boolean;
 }
 
 const siteTitle = "DecSeven";
 const defaultDescription =
-  "一个正在被 AI 抢饭碗的程序员，一边被卷，一边折腾。聊技术，也聊真实踩坑。";
-const { title = siteTitle, description = defaultDescription } = Astro.props;
+  "DecSeven 的个人网站：记录技术构建、生活观察、开源作品和暂时没有结论的奇怪想法。";
+const { title = siteTitle, description = defaultDescription, article = false } = Astro.props;
 const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const pathname = Astro.url.pathname;
 const ogImage = new URL("/og.png", Astro.site ?? Astro.url).toString();
 
 const navItems = [
-  { href: "/posts/", label: "文章" },
-  { href: "/notes/", label: "笔记" },
-  { href: "/docs/", label: "文档" },
-  { href: "/search/", label: "搜索" },
+  { href: "/work/", label: "作品" },
+  { href: "/writing/", label: "写作" },
+  { href: "/now/", label: "近况" },
   { href: "/about/", label: "关于" }
 ];
+
+const isCurrent = (href: string) =>
+  href === "/writing/"
+    ? /^\/(writing|posts|notes|docs|tags)(\/|$)/.test(pathname)
+    : pathname.startsWith(href);
+const canonical = new URL(pathname, Astro.site ?? Astro.url);
 ---
 
 <!doctype html>
@@ -32,7 +38,9 @@ const navItems = [
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:url" content={canonical} />
+    <link rel="canonical" href={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title="DecSeven RSS" href="/rss.xml" />
@@ -42,28 +50,39 @@ const navItems = [
     <a class="skip-link" href="#content">跳到内容</a>
     <header class="site-header" data-pagefind-ignore>
       <a class="brand" href="/" aria-label="DecSeven 首页">
-        <img src="/favicon.svg" width="32" height="32" alt="" />
-        <span>DecSeven</span>
+        <span class="brand-mark">D7</span>
+        <span class="brand-name">DecSeven<span class="brand-dot">.</span></span>
       </a>
       <nav class="site-nav" aria-label="主导航">
         {
           navItems.map((item) => (
             <a
               href={item.href}
-              aria-current={pathname.startsWith(item.href) ? "page" : undefined}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
             >
               {item.label}
             </a>
           ))
         }
+        <a class="nav-search" href="/search/" aria-current={pathname === "/search/" ? "page" : undefined}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg>
+          <span>搜索</span>
+        </a>
       </nav>
     </header>
-    <main id="content">
+    <main id="content" tabindex="-1">
       <slot />
     </main>
     <footer class="site-footer" data-pagefind-ignore>
-      <p>© {new Date().getFullYear()} DecSeven</p>
-      <a href="/rss.xml">RSS</a>
+      <div>
+        <p class="site-footer__statement">持续构建，慢慢记录。</p>
+        <p>© {new Date().getFullYear()} DecSeven</p>
+      </div>
+      <div class="site-footer__links">
+        <a href="https://github.com/dec-seven">GitHub ↗</a>
+        <a href="/rss.xml">RSS ↗</a>
+        <a href="#content">回到顶部 ↑</a>
+      </div>
     </footer>
     <script is:inline>
       (() => {

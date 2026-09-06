@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { currentNote } from "../data/home";
+import { formatDate } from "../lib/content";
+---
+<BaseLayout title="近况" description="DecSeven 最近在做什么。记录公开的阶段进展与下一步。">
+  <header class="section page-heading">
+    <p class="eyebrow">NOW / 最近在做什么</p>
+    <h1>此刻，在这一站。</h1>
+    <p>留一份有日期的近况，看看注意力和行动如何变化。</p>
+  </header>
+  <section class="section list-section" aria-label="近况记录">
+    <article class="now-entry" data-pagefind-body>
+      <time datetime={currentNote.date.toISOString()}>{formatDate(currentNote.date)}</time>
+      <div>
+        <h2>{currentNote.title}</h2>
+        <div class="prose">
+          <p>这次重新整理网站，想让它同时装下做过的项目、技术实践和生活里的想法。</p>
+          <p>把个人网站与服务器部署实践整理成案例，关联代码或原始复盘；把写作的主题与形式分开，给生活和奇想留出入口。</p>
+          <p>接下来，希望沿着真实项目继续补充内容：记录具体问题、选择方案的理由，以及完成后还想改进什么。</p>
+          <p><a href={currentNote.href}>看看这次网站改版的案例 →</a></p>
+        </div>
+      </div>
+    </article>
+    <p class="now-follow">这是一次阶段记录。新的想法和进展，会在下一次更新里继续。</p>
+  </section>
+</BaseLayout>

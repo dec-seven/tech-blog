@@ -1,0 +1,19 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout title="作品" description="DecSeven 的个人项目与工程实践：背景、技术选择、结果和可查阅的代码与复盘。">
+  <header class="section page-heading">
+    <p class="eyebrow">WORK / 项目与实践</p>
+    <h1>从一个问题，<br />到一个能用的结果。</h1>
+    <p>记录我承担的工作、做过的取舍，以及结果如何被验证。</p>
+  </header>
+  <section class="section list-section" aria-label="作品案例">
+    <div class="project-list">
+      {projects.map((project, index) => <ProjectCard project={project} index={index + 1} />)}
+    </div>
+  </section>
+</BaseLayout>

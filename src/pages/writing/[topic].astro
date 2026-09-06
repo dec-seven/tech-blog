@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WritingArchive from "../../components/WritingArchive.astro";
+import { topicMeta, type ContentTopic } from "../../lib/content";
+export function getStaticPaths() {
+  return (Object.keys(topicMeta) as ContentTopic[]).map((topic) => ({ params: { topic }, props: { topic } }));
+}
+const { topic } = Astro.props;
+const meta = topicMeta[topic];
+---
+<BaseLayout title={`写作 · ${meta.label}`} description={meta.description}>
+  <header class="section page-heading">
+    <p class="eyebrow">WRITING / {meta.label}</p>
+    <h1>{meta.label}</h1>
+    <p>{meta.description}</p>
+  </header>
+  <WritingArchive topic={topic} />
+</BaseLayout>
