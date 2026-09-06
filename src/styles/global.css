@@ -163,6 +163,10 @@ main { min-height: calc(100vh - 14rem); }
 .page-heading h1, .about-hero h1, .not-found h1 { margin: 0; font-size: clamp(2.2rem, 4.5vw, 3.4rem); font-weight: 550; line-height: 1.3; letter-spacing: -.055em; }
 .page-heading > p:not(.eyebrow) { max-width: 39rem; color: var(--muted); margin: 1.25rem 0 0; }
 .page-heading .back-link { margin-bottom: 1.25rem; }
+.page-heading--writing { padding-top: 2.8rem; padding-bottom: 1.35rem; }
+.page-heading--writing .eyebrow { margin-bottom: .55rem; }
+.page-heading--writing h1 { font-size: clamp(1.95rem, 3.6vw, 2.8rem); }
+.page-heading--writing > p:not(.eyebrow) { margin-top: .55rem; font-size: .9rem; line-height: 1.55; }
 .list-section { padding-top: 0; }
 .back-link { display: inline-flex; min-height: 2.75rem; align-items: center; gap: .5rem; color: var(--muted); font-size: .875rem; }
 .back-link:hover { color: var(--accent); }
@@ -310,6 +314,7 @@ main { min-height: calc(100vh - 14rem); }
   .margin-note { padding-left: 1.25rem; }
   .margin-note h3 { font-size: 1.25rem; }
   .page-heading { padding-bottom: 2rem; }
+  .page-heading--writing { padding-top: 2.2rem; padding-bottom: 1rem; }
   .list-section, .search-section { padding-top: 0; }
   .writing-controls { align-items: flex-start; flex-direction: column; gap: 1rem; }
   .topic-nav a { padding-inline: .65rem; }

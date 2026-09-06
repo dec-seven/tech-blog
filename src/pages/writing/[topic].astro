@@ -9,7 +9,7 @@ const { topic } = Astro.props;
 const meta = topicMeta[topic];
 ---
 <BaseLayout title={`文章 · ${meta.label}`} description={meta.description}>
-  <header class="section page-heading">
+  <header class="section page-heading page-heading--writing">
     <p class="eyebrow">文章 / {meta.label}</p>
     <h1>{meta.label}</h1>
     <p>{meta.description}</p>
