@@ -10,6 +10,7 @@ export const topicMeta: Record<ContentTopic, { label: string; description: strin
 };
 
 export async function getWriting() {
+  // 聚合三类公开内容，保留类型以便后续生成正确的链接和标签。
   const kinds: ContentKind[] = ["posts", "notes", "docs"];
   const groups = await Promise.all(kinds.map(async (kind) => {
     const entries = await getCollection(kind, ({ data }) => !data.draft);

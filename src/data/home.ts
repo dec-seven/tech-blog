@@ -20,7 +20,7 @@ export const currentNote = {
   href: "/work/personal-site/"
 };
 
-// Add 3-10 personal photos here. The homepage renders at most 10 entries.
+// 首页照片只从这里读取；保持 3-10 张，组件会按顺序轮播并最多展示 10 张。
 export const photoNotes = [
   {
     src: "/images/profile-night.jpg",
@@ -42,6 +42,7 @@ export const photoNotes = [
   }
 ];
 
+// 这些是首页的视觉入口，链接到可继续阅读的文章或案例，而不是独立内容源。
 export const visualNotes = [
   {
     src: "/images/linux-proxy-architecture.svg",

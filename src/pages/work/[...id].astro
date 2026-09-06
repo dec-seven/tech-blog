@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 export async function getStaticPaths() {
+  // 每个已发布案例在构建时生成独立页面，保持作品集无需运行时数据库。
   return (await getCollection("projects", ({ data }) => !data.draft))
     .map((project) => ({ params: { id: project.id }, props: { project } }));
 }
@@ -22,6 +23,7 @@ const { Content, headings } = await render(project);
         <div><dt>状态</dt><dd>{project.data.status}</dd></div>
       </dl>
       <ul class="work-tags" aria-label="技术栈">{project.data.stack.map((item) => <li>{item}</li>)}</ul>
+      {/* 证据链接来自案例 frontmatter；首尾各放一次，便于快速核验和读完后继续查看。 */}
       <div class="evidence-links" aria-label="项目证据">
         {project.data.evidence.map((link) => <a href={link.href}>{link.label} <span aria-hidden="true">↗</span></a>)}
       </div>

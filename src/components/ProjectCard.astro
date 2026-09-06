@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 interface Props { project: CollectionEntry<"projects">; index: number; }
 const { project, index } = Astro.props;
 ---
+{/* 首页与 /work 共用这张摘要卡，避免案例信息在两个入口分叉。 */}
 <article class="project-card">
   <div class="project-card__number" aria-hidden="true">{String(index).padStart(2, "0")}</div>
   <div class="project-card__main">
