@@ -29,7 +29,10 @@ const hasToc = tocHeadings.length > 0;
   <div class:list={["article-frame", hasToc && "article-frame--with-toc"]}>
     <article class="article-shell" data-pagefind-body>
       <header class="article-header">
-        <p class="eyebrow">{kind}</p>
+        <div class="article-header__topline">
+          <p class="eyebrow">{kind}</p>
+          <a class="article-back" href="/writing/">全部文章 <span aria-hidden="true">↗</span></a>
+        </div>
         <h1>{title}</h1>
         <p class="article-description">{description}</p>
         <div class="article-meta">
