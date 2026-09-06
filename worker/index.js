@@ -1,3 +1,4 @@
+// 只有这个同域接口会触碰统计数据，其余请求仍然交给 Pages 静态资源处理。
 const API_PATH = "/api/views";
 const MAX_BODY_BYTES = 512;
 const ARTICLE_PREFIXES = ["/posts/", "/notes/", "/docs/"];
@@ -16,6 +17,7 @@ function normalizeCounter(input) {
   const scope = input?.scope;
   const resource = input?.resource;
 
+  // 全站只保留一个固定计数器，避免客户端随意创建不同的站点键。
   if (scope === "site") {
     return { scope, resource: "/" };
   }
@@ -25,6 +27,7 @@ function normalizeCounter(input) {
     return null;
   }
 
+  // 文章路径白名单避免 API 被用来写入无关的 D1 记录。
   const normalizedResource = resource.endsWith("/") ? resource : `${resource}/`;
   const isArticle = ARTICLE_PREFIXES.some((prefix) => normalizedResource.startsWith(prefix));
   const hasSlug = normalizedResource.slice(normalizedResource.indexOf("/", 1) + 1).replaceAll("/", "").length > 0;
@@ -36,6 +39,7 @@ async function readSmallJson(request) {
   const contentLength = Number(request.headers.get("content-length"));
   if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) return null;
 
+  // 流式读取并限制体积，统计端点不应接受大请求体。
   const reader = request.body?.getReader();
   if (!reader) return null;
 
@@ -77,6 +81,7 @@ function isEligibleWrite(request, url) {
   const fetchSite = request.headers.get("sec-fetch-site");
   const userAgent = request.headers.get("user-agent") ?? "";
 
+  // 只记录正常同源浏览器请求，过滤最常见的爬虫和跨站调用。
   return origin === url.origin && (fetchSite === null || fetchSite === "same-origin") && !BOT_USER_AGENT.test(userAgent);
 }
 
@@ -90,6 +95,7 @@ async function getCount(db, counter) {
 }
 
 async function incrementCount(db, counter) {
+  // SQLite 的 UPSERT 在数据库侧完成累加，避免并发访问丢失浏览量。
   await db
     .prepare(
       "INSERT INTO view_counters (scope, resource, views) VALUES (?, ?, 1) ON CONFLICT(scope, resource) DO UPDATE SET views = views + 1"
@@ -136,6 +142,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === API_PATH) return handleViews(request, env);
 
+    // 统计接口之外保持原有的静态站点行为。
     return env.ASSETS.fetch(request);
   }
 };
