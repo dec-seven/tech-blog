@@ -26,18 +26,21 @@ export const photoNotes = [
     src: "/images/profile-night.jpg",
     alt: "夜晚灯光下的古建筑与彩色无人机灯光秀",
     label: "NIGHT WALK / 01",
+    title: "抬头看见夜里的颜色",
     caption: "有些夜晚，不需要解释，只需要记住当时抬头看见的颜色。"
   },
   {
     src: "/images/366ddd413fd67c2e9f1aba02853a13f5.jpg",
     alt: "夕阳照在海面上，远处是被金色雾气笼罩的城市轮廓，海边有人走过",
     label: "GOLDEN HOUR / 02",
+    title: "日落之后，海岸暂时安静",
     caption: "太阳落下来，城市和海都暂时安静了一点。"
   },
   {
     src: "/images/ede5fffcb6d3914209c09f3937530d67.jpg",
     alt: "傍晚的水乡河道，一位船夫坐在小船上，岸边屋舍亮着暖色灯光",
     label: "WATER TOWN / 03",
+    title: "沿着水走，时间慢下来",
     caption: "沿着水走，时间会换一种更慢的速度。"
   }
 ];

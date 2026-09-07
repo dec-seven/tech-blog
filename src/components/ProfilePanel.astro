@@ -1,5 +1,8 @@
 ---
 import { homeProfile, photoNotes } from "../data/home";
+
+const visiblePhotos = photoNotes.slice(0, 10);
+const initialPhoto = visiblePhotos[0];
 ---
 <section class="section developer-hero" aria-labelledby="profile-title">
   <div class="hero-copy">
@@ -18,19 +21,30 @@ import { homeProfile, photoNotes } from "../data/home";
     </div>
   </div>
   <div class="hero-side">
-    <section class="hero-photo" aria-labelledby="photo-title" data-photo-carousel data-photo-count={Math.min(photoNotes.length, 10)}>
-      <div class="hero-photo__heading">
-        <p class="eyebrow">PHOTO SWITCHER <span class="eyebrow-separator">/</span> 01</p>
-        <span class="hero-photo__count">{String(Math.min(photoNotes.length, 10)).padStart(2, "0")} 张记录</span>
-      </div>
+    <section class="hero-photo" aria-labelledby="photo-title" data-photo-carousel data-photo-count={visiblePhotos.length}>
       <h2 id="photo-title" class="sr-only">照片切换台</h2>
       <div class="photo-switcher">
+        <button type="button" class="photo-guide" data-photo-next title="切换到下一张照片" aria-label="切换到下一张照片">
+          <span class="photo-guide__avatar">
+            <img src={homeProfile.avatar} alt={homeProfile.avatarAlt} width="48" height="48" />
+          </span>
+          <span class="photo-guide__copy">
+            <strong data-photo-guide-title aria-live="polite">{initialPhoto?.title}</strong>
+          </span>
+          <span class="photo-guide__countdown" data-photo-countdown aria-label="3 秒后切换" role="timer">
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <circle class="photo-guide__countdown-track" cx="20" cy="20" r="17" />
+              <circle class="photo-guide__countdown-ring" data-photo-countdown-ring cx="20" cy="20" r="17" />
+            </svg>
+            <span data-photo-countdown-value>3</span>
+          </span>
+        </button>
         <div class="photo-switcher__stage">
           <span class="photo-switcher__mark photo-switcher__mark--top" aria-hidden="true">D7 / FIELD</span>
           <span class="photo-switcher__mark photo-switcher__mark--bottom" aria-hidden="true">KEEP LOOKING</span>
           <div class="photo-track">
-          {photoNotes.slice(0, 10).map((photo, index) => (
-            <figure class:list={["photo-note", index === 0 ? "is-current" : "is-hidden"]} data-photo-slide aria-hidden={index === 0 ? undefined : "true"}>
+          {visiblePhotos.map((photo, index) => (
+            <figure class:list={["photo-note", index === 0 ? "is-current" : "is-hidden"]} data-photo-slide data-photo-title={photo.title} aria-hidden={index === 0 ? undefined : "true"}>
               <div class="photo-note__paper">
                 <div class="photo-note__image"><img src={photo.src} alt={photo.alt} loading={index === 0 ? "eager" : "lazy"} /></div>
                 <figcaption>
@@ -41,15 +55,11 @@ import { homeProfile, photoNotes } from "../data/home";
             </figure>
           ))}
           </div>
-          <button type="button" class="photo-switcher__trigger" data-photo-next title="切换到下一张照片" aria-label="切换到下一张照片">
-            <span aria-hidden="true">↻</span>
-            <span>换一张</span>
-          </button>
         </div>
         <div class="photo-controls" data-photo-controls aria-label="照片轮播控制">
           <button type="button" class="photo-control" data-photo-prev title="上一张照片" aria-label="上一张照片">←</button>
-          <span class="photo-counter" data-photo-counter>01 / {String(Math.min(photoNotes.length, 10)).padStart(2, "0")}</span>
-          <span class="photo-controls__label">左滑切换</span>
+          <span class="photo-counter" data-photo-counter>01 / {String(visiblePhotos.length).padStart(2, "0")}</span>
+          <span class="photo-controls__label">自动翻页 · 点击切换</span>
           <button type="button" class="photo-control" data-photo-next title="下一张照片" aria-label="下一张照片">→</button>
         </div>
       </div>
@@ -59,20 +69,74 @@ import { homeProfile, photoNotes } from "../data/home";
 
 <script>
   const carousel = document.querySelector("[data-photo-carousel]");
-  const slides = carousel ? [...carousel.querySelectorAll("[data-photo-slide]")] : [];
+  const slides = carousel ? [...carousel.querySelectorAll<HTMLElement>("[data-photo-slide]")] : [];
   const controls = carousel?.querySelector("[data-photo-controls]");
   const counter = carousel?.querySelector("[data-photo-counter]");
+  const guide = carousel?.querySelector("[data-photo-guide-title]");
+  const countdown = carousel?.querySelector<HTMLElement>("[data-photo-countdown]");
+  const countdownRing = carousel?.querySelector<SVGCircleElement>("[data-photo-countdown-ring]");
+  const countdownValue = carousel?.querySelector("[data-photo-countdown-value]");
   const previous = carousel?.querySelector("[data-photo-prev]");
   const nextButtons = carousel ? [...carousel.querySelectorAll("[data-photo-next]")] : [];
 
-  if (carousel && slides.length > 1 && controls && counter && previous && nextButtons.length > 0) {
+  if (carousel && slides.length > 1 && controls && counter && guide && countdown && countdownRing && countdownValue && previous && nextButtons.length > 0) {
     let active = 0;
     let transitioning = false;
+    let autoTimer: number | undefined;
+    const countdownSeconds = 3;
+    const countdownCircumference = 2 * Math.PI * 17;
+
+    countdownRing.style.strokeDasharray = String(countdownCircumference);
+
+    const updateCountdown = (seconds: number) => {
+      countdownValue.textContent = String(seconds);
+      countdownRing.style.strokeDashoffset = String(
+        countdownCircumference * (1 - seconds / countdownSeconds)
+      );
+      countdown.setAttribute("aria-label", `${seconds} 秒后切换`);
+    };
+
+    const updateGuide = (index: number) => {
+      const title = slides[index]?.dataset.photoTitle;
+      if (!title) return;
+
+      guide.textContent = title;
+      const guideButton = guide.closest("button");
+      guideButton?.setAttribute("aria-label", `切换照片，当前是：${title}`);
+    };
+
+    const stopAuto = () => {
+      if (autoTimer !== undefined) {
+        window.clearInterval(autoTimer);
+        autoTimer = undefined;
+      }
+    };
+
+    const startAuto = () => {
+      stopAuto();
+      updateCountdown(countdownSeconds);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        countdown.hidden = true;
+        return;
+      }
+
+      countdown.hidden = false;
+      let remaining = countdownSeconds;
+      autoTimer = window.setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          if (show(active + 1)) startAuto();
+          return;
+        }
+        updateCountdown(remaining);
+      }, 1000);
+    };
+
     const show = (index: number, direction = 1) => {
-      if (transitioning) return;
+      if (transitioning) return false;
 
       const next = (index + slides.length) % slides.length;
-      if (next === active) return;
+      if (next === active) return false;
 
       transitioning = true;
       const outgoing = slides[active];
@@ -101,9 +165,29 @@ import { homeProfile, photoNotes } from "../data/home";
       }, 460);
 
       counter.textContent = `${String(next + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+      updateGuide(next);
+      return true;
     };
-    previous.addEventListener("click", () => show(active - 1, -1));
-    nextButtons.forEach((button) => button.addEventListener("click", () => show(active + 1)));
+
+    const move = (index: number, direction = 1) => {
+      if (show(index, direction)) startAuto();
+    };
+
+    previous.addEventListener("click", () => move(active - 1, -1));
+    nextButtons.forEach((button) => button.addEventListener("click", () => move(active + 1)));
+    carousel.addEventListener("mouseenter", stopAuto);
+    carousel.addEventListener("mouseleave", startAuto);
+    carousel.addEventListener("focusin", stopAuto);
+    carousel.addEventListener("focusout", (event) => {
+      const nextFocus = (event as FocusEvent).relatedTarget as Node | null;
+      if (!nextFocus || !carousel.contains(nextFocus)) startAuto();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopAuto();
+      else startAuto();
+    });
+    updateGuide(active);
+    startAuto();
   } else if (controls) {
     controls.setAttribute("hidden", "true");
   }

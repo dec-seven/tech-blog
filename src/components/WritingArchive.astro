@@ -1,24 +1,32 @@
 ---
-import ContentCard from "./ContentCard.astro";
-import { getWriting, entryHref, collectionMeta, topicMeta, type ContentTopic } from "../lib/content";
+import TagList from "./TagList.astro";
+import { getWriting, entryHref, collectionMeta, topicMeta, formatDate, type ContentTopic } from "../lib/content";
 interface Props { topic?: ContentTopic; }
 const { topic } = Astro.props;
 const all = await getWriting();
 const items = topic ? all.filter(({ entry }) => entry.data.topic === topic) : all;
 const topics = Object.entries(topicMeta) as [ContentTopic, { label: string; description: string }][];
+const topicCounts = Object.fromEntries(
+  topics.map(([key]) => [key, all.filter(({ entry }) => entry.data.topic === key).length])
+);
 ---
-<section class="section list-section" data-writing-archive>
-  <div class="writing-controls">
+<section class="section writing-archive" data-writing-archive>
+  <header class="writing-controls">
+    <div class="writing-controls__topics">
+      <p class="writing-controls__label">按主题浏览</p>
     <nav class="topic-nav" aria-label="文章主题">
-      <a href="/writing/" aria-current={!topic ? "page" : undefined}>全部 <small>{all.length}</small></a>
+        <a href="/writing/" aria-current={!topic ? "page" : undefined}>
+          <span>全部</span><small>{String(all.length).padStart(2, "0")}</small>
+        </a>
       {topics.map(([key, value]) => (
         <a href={`/writing/${key}/`} aria-current={topic === key ? "page" : undefined}>
-          {value.label} <small>{all.filter(({ entry }) => entry.data.topic === key).length}</small>
+            <span>{value.label}</span><small>{String(topicCounts[key]).padStart(2, "0")}</small>
         </a>
       ))}
     </nav>
+    </div>
     <label class="format-control" hidden>
-      内容形式
+      <span>内容形式</span>
       <select data-format-filter aria-label="按内容形式筛选">
         <option value="all">全部形式</option>
         <option value="posts">文章</option>
@@ -26,16 +34,43 @@ const topics = Object.entries(topicMeta) as [ContentTopic, { label: string; desc
         <option value="docs">资料</option>
       </select>
     </label>
-  </div>
-  <p class="filter-result" role="status" aria-live="polite" aria-atomic="true" data-filter-result>{items.length} 篇记录 · 按发布时间排列</p>
-  <div class="content-list">
-    {items.map(({ entry, kind }) => (
-      <div data-writing-kind={kind}>
-        <ContentCard href={entryHref(kind, entry)} title={entry.data.title}
-          description={entry.data.description} pubDate={entry.data.pubDate}
-          tags={entry.data.tags} kind={collectionMeta[kind].label} topic={entry.data.topic} cover={entry.data.cover} />
-      </div>
+  </header>
+
+  <div class="writing-index">
+    <div class="writing-index__heading">
+      <p class="filter-result" role="status" aria-live="polite" aria-atomic="true" data-filter-result>{items.length} 篇记录</p>
+      <p>NEWEST FIRST</p>
+    </div>
+    <ol class="writing-list">
+    {items.map(({ entry, kind }, index) => (
+      <li data-writing-kind={kind}>
+        <article class="writing-entry">
+          <div class="writing-entry__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
+          <div class="writing-entry__body">
+            <div class="writing-entry__meta">
+              <time datetime={entry.data.pubDate.toISOString()}>{formatDate(entry.data.pubDate)}</time>
+              <span>{collectionMeta[kind].label}</span>
+              <span>{topicMeta[entry.data.topic].label}</span>
+            </div>
+            <h2><a href={entryHref(kind, entry)}>{entry.data.title}</a></h2>
+            <p>{entry.data.description}</p>
+            <div class="writing-entry__footer">
+              <TagList tags={entry.data.tags.slice(0, 4)} compact />
+              <span class="view-counter writing-entry__views" data-view-counter data-view-scope="article" data-view-resource={entryHref(kind, entry)} data-view-readonly="true" hidden>
+                阅读 <strong data-view-count>0</strong>
+              </span>
+            </div>
+          </div>
+          <a class:list={["writing-entry__visual", entry.data.cover && "writing-entry__visual--cover"]} href={entryHref(kind, entry)} aria-label={`阅读：${entry.data.title}`}>
+            {entry.data.cover
+              ? <img src={entry.data.cover} alt="" loading="lazy" />
+              : <span class="writing-entry__kind" aria-hidden="true">{collectionMeta[kind].label}</span>}
+            <span class="writing-entry__arrow" aria-hidden="true">↗</span>
+          </a>
+        </article>
+      </li>
     ))}
+    </ol>
   </div>
   <div class="empty-state" data-topic-empty hidden={items.length > 0}>
     <h2>{topic === "life" ? "生活这一页，慢慢写。" : "这里还没有公开的记录。"}</h2>
@@ -66,7 +101,7 @@ const topics = Object.entries(topicMeta) as [ContentTopic, { label: string; desc
         row.hidden = select.value !== "all" && row.dataset.writingKind !== select.value;
         if (!row.hidden) count++;
       });
-      if (result) result.textContent = `${count} 篇记录 · 按发布时间排列`;
+      if (result) result.textContent = `${count} 篇记录`;
       if (empty) empty.hidden = count > 0 || rows.length === 0;
       if (topicEmpty) topicEmpty.hidden = rows.length > 0;
     };
